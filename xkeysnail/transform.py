@@ -129,7 +129,7 @@ def K(exp):
     modifier_strs = []
     while True:
         m = re.match(
-            r"\A(LC|LCtrl|RC|RCtrl|C|Ctrl|LM|LAlt|RM|RAlt|M|Alt|LShift|RShift|Shift|LSuper|LWin|RSuper|RWin|Super|Win|Caps)-",
+            r"\A(LC|LCtrl|RC|RCtrl|C|Ctrl|LM|LAlt|RM|RAlt|M|Alt|LShift|RShift|Shift|LSuper|LWin|RSuper|RWin|Super|Win|Caps|F13|F14|F15|F16|F17|F18|F19|F10|F21|F22|F23|F24|)-",
             exp)
         if m is None:
             break
@@ -173,6 +173,31 @@ def create_modifiers_from_strings(modifier_strs):
             modifiers.add(Modifier.SHIFT)
         elif modifier_str == 'Caps':
             modifiers.add(Modifier.CAPS)
+        elif modifier_str == 'F13':
+            modifiers.add(Modifier.F13)
+        elif modifier_str == 'F14':
+            modifiers.add(Modifier.F14)
+        elif modifier_str == 'F15':
+            modifiers.add(Modifier.F15)
+        elif modifier_str == 'F16':
+            modifiers.add(Modifier.F16)
+        elif modifier_str == 'F17':
+            modifiers.add(Modifier.F17)
+        elif modifier_str == 'F18':
+            modifiers.add(Modifier.F18)
+        elif modifier_str == 'F19':
+            modifiers.add(Modifier.F19)
+        elif modifier_str == 'F20':
+            modifiers.add(Modifier.F20)
+        elif modifier_str == 'F21':
+            modifiers.add(Modifier.F21)
+        elif modifier_str == 'F22':
+            modifiers.add(Modifier.F22)
+        elif modifier_str == 'F23':
+            modifiers.add(Modifier.F23)
+        elif modifier_str == 'F24':
+            modifiers.add(Modifier.F24)
+
     return modifiers
 
 

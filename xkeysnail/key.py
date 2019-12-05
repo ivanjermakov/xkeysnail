@@ -741,7 +741,8 @@ class Modifier(Enum):
     L_ALT, R_ALT, ALT, \
     L_SHIFT, R_SHIFT, SHIFT, \
     L_SUPER, R_SUPER, SUPER, \
-    CAPS = range(13)
+    CAPS, \
+    F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24 = range(25)
 
     @classmethod
     def _get_modifier_map(cls):
@@ -758,7 +759,19 @@ class Modifier(Enum):
             cls.L_SUPER: {Key.LEFT_META},
             cls.R_SUPER: {Key.RIGHT_META},
             cls.SUPER: {Key.LEFT_META, Key.RIGHT_META},
-            cls.CAPS: {Key.CAPSLOCK}
+            cls.CAPS: {Key.CAPSLOCK},
+            cls.F13: {Key.F13},
+            cls.F14: {Key.F14},
+            cls.F15: {Key.F15},
+            cls.F16: {Key.F16},
+            cls.F17: {Key.F17},
+            cls.F18: {Key.F18},
+            cls.F19: {Key.F19},
+            cls.F20: {Key.F20},
+            cls.F21: {Key.F21},
+            cls.F22: {Key.F22},
+            cls.F23: {Key.F23},
+            cls.F24: {Key.F24},
         }
 
     @classmethod
@@ -779,6 +792,18 @@ class Modifier(Enum):
         if self.value == self.R_SUPER.value: return "RSuper"
         if self.value == self.SUPER.value: return "Super"
         if self.value == self.CAPS.value: return "Caps"
+        if self.value == self.F13.value: return "F13"
+        if self.value == self.F14.value: return "F14"
+        if self.value == self.F15.value: return "F15"
+        if self.value == self.F16.value: return "F16"
+        if self.value == self.F17.value: return "F17"
+        if self.value == self.F18.value: return "F18"
+        if self.value == self.F19.value: return "F19"
+        if self.value == self.F20.value: return "F20"
+        if self.value == self.F21.value: return "F21"
+        if self.value == self.F22.value: return "F22"
+        if self.value == self.F23.value: return "F23"
+        if self.value == self.F24.value: return "F24"
         return None
 
     def is_specified(self):
@@ -790,7 +815,19 @@ class Modifier(Enum):
                self.value == self.R_SHIFT.value or \
                self.value == self.L_SUPER.value or \
                self.value == self.R_SUPER.value or \
-               self.value == self.CAPS.value
+               self.value == self.CAPS.value or \
+               self.value == self.F13.value or \
+               self.value == self.F14.value or \
+               self.value == self.F15.value or \
+               self.value == self.F16.value or \
+               self.value == self.F17.value or \
+               self.value == self.F18.value or \
+               self.value == self.F19.value or \
+               self.value == self.F20.value or \
+               self.value == self.F21.value or \
+               self.value == self.F22.value or \
+               self.value == self.F23.value or \
+               self.value == self.F24.value
 
     def to_left(self):
         if self.value == self.CONTROL.value:
