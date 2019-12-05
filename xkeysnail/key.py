@@ -761,6 +761,10 @@ class Modifier(Enum):
             cls.CAPS: {Key.CAPSLOCK}
         }
 
+    @classmethod
+    def get_abstract_modifiers(cls):
+        return {cls.CONTROL, cls.ALT, cls.SHIFT, cls.SUPER, cls.CAPS}
+
     def __str__(self):
         if self.value == self.L_CONTROL.value: return "LC"
         if self.value == self.R_CONTROL.value: return "RC"
