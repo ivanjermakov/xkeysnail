@@ -2,6 +2,7 @@
 
 import itertools
 from inspect import signature
+
 from .key import Action, Combo, Key, Modifier
 from .output import send_combo, send_key_action, send_key, is_pressed
 
@@ -38,6 +39,7 @@ def get_class_name(window):
         return wmclass
     except:
         return None
+
 
 # ============================================================ #
 
@@ -77,6 +79,7 @@ def set_mark(mark_set):
     def _set_mark():
         global _mark_set
         _mark_set = mark_set
+
     return _set_mark
 
 
@@ -99,18 +102,23 @@ def with_or_set_mark(combo):
 
 def launch(command):
     """Launch command"""
+
     def launcher():
         from subprocess import Popen
         Popen(command)
+
     return launcher
 
 
 def sleep(sec):
     """Sleep sec in commands"""
+
     def sleeper():
         import time
         time.sleep(sec)
+
     return sleeper
+
 
 # ============================================================ #
 
@@ -120,7 +128,9 @@ def K(exp):
     import re
     modifier_strs = []
     while True:
-        m = re.match(r"\A(LC|LCtrl|RC|RCtrl|C|Ctrl|LM|LAlt|RM|RAlt|M|Alt|LShift|RShift|Shift|LSuper|LWin|RSuper|RWin|Super|Win)-", exp)
+        m = re.match(
+            r"\A(LC|LCtrl|RC|RCtrl|C|Ctrl|LM|LAlt|RM|RAlt|M|Alt|LShift|RShift|Shift|LSuper|LWin|RSuper|RWin|Super|Win)-",
+            exp)
         if m is None:
             break
         modifier = m.group(1)
@@ -163,6 +173,7 @@ def create_modifiers_from_strings(modifier_strs):
             modifiers.add(Modifier.SHIFT)
     return modifiers
 
+
 # ============================================================
 # Keymap
 # ============================================================
@@ -173,6 +184,38 @@ _mode_maps = None
 
 escape_next_key = {}
 pass_through_key = {}
+
+
+def _generate_combinations(items):
+    # to reduce number of mapping combinations assume that no one will use more than 2 modifier keys simultaneously
+    max_modifiers = 2
+    return list(itertools.chain.from_iterable(itertools.combinations(items, r) for r in range(max_modifiers + 1)))
+
+
+def _add_modifiers(combo, modifiers):
+    return Combo(set(combo.modifiers | set(modifiers)), combo.key)
+
+
+def _generate_mappings_with_modifiers(combo, key, modifier_combinations):
+    mappings = {}
+    for mc in modifier_combinations:
+        print(f'COMB: {mc}')
+        mappings[_add_modifiers(combo, mc)] = Combo(set(mc), key)
+    return mappings
+
+
+def _transfer_modifiers(mappings):
+    modifier_keys = Modifier.get_all_keys()
+    modifiers = map(lambda k: Modifier.from_key(k), modifier_keys)
+    modifier_combinations = _generate_combinations(modifiers)
+    result = {}
+    print(f'MODIFIERS:\n{Modifier.get_all_keys()}')
+    for combo, key in mappings.items():
+        print(combo)
+        print(key)
+        result.update(_generate_mappings_with_modifiers(combo, key, modifier_combinations))
+    print(f'RESULT MAPPINGS:\n{result}')
+    return result
 
 
 def define_keymap(condition, mappings, name="Anonymous keymap"):
@@ -205,6 +248,7 @@ def define_keymap(condition, mappings, name="Anonymous keymap"):
                 if isinstance(k, Combo):
                     expanded_modifiers = []
                     for modifier in k.modifiers:
+                        print(modifier)
                         if not modifier.is_specified():
                             expanded_modifiers.append([modifier.to_left(), modifier.to_right()])
                         else:
@@ -222,6 +266,8 @@ def define_keymap(condition, mappings, name="Anonymous keymap"):
                 del target[key]
             # Merge expanded mappings into original mappings
             target.update(expanded_mappings)
+
+    mappings = _transfer_modifiers(mappings)
 
     expand(mappings)
 
@@ -296,7 +342,6 @@ def define_multipurpose_modmap(multipurpose_remappings):
 
 
 def multipurpose_handler(key, action):
-
     def maybe_press_modifiers():
         """Search the multipurpose map for keys that are pressed. If found and
         we have not yet sent it's modifier translation we do so."""
@@ -314,7 +359,8 @@ def multipurpose_handler(key, action):
         mod_is_down = mod_key in _pressed_modifier_keys
         key_was_last_press = key == _last_key
 
-        def set_key_state(x): _multipurpose_map[key][2] = x
+        def set_key_state(x):
+            _multipurpose_map[key][2] = x
 
         if action == Action.RELEASE and key_is_down:
             set_key_state(Action.RELEASE)
@@ -397,8 +443,8 @@ def transform_key(key, action, wm_class=None, quiet=False):
         keymap_names = []
         for condition, mappings, name in _toplevel_keymaps:
             if (callable(condition) and condition(wm_class)) \
-               or (hasattr(condition, "search") and condition.search(wm_class)) \
-               or condition is None:
+                    or (hasattr(condition, "search") and condition.search(wm_class)) \
+                    or condition is None:
                 _mode_maps.append(mappings)
                 keymap_names.append(name)
         if not quiet:
