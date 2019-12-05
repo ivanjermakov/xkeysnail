@@ -129,7 +129,7 @@ def K(exp):
     modifier_strs = []
     while True:
         m = re.match(
-            r"\A(LC|LCtrl|RC|RCtrl|C|Ctrl|LM|LAlt|RM|RAlt|M|Alt|LShift|RShift|Shift|LSuper|LWin|RSuper|RWin|Super|Win)-",
+            r"\A(LC|LCtrl|RC|RCtrl|C|Ctrl|LM|LAlt|RM|RAlt|M|Alt|LShift|RShift|Shift|LSuper|LWin|RSuper|RWin|Super|Win|Caps)-",
             exp)
         if m is None:
             break
@@ -171,6 +171,8 @@ def create_modifiers_from_strings(modifier_strs):
             modifiers.add(Modifier.R_SHIFT)
         elif modifier_str == 'Shift':
             modifiers.add(Modifier.SHIFT)
+        elif modifier_str == 'Caps':
+            modifiers.add(Modifier.CAPS)
     return modifiers
 
 
@@ -196,25 +198,29 @@ def _add_modifiers(combo, modifiers):
     return Combo(set(combo.modifiers | set(modifiers)), combo.key)
 
 
-def _generate_mappings_with_modifiers(combo, key, modifier_combinations):
+def _generate_mappings_with_modifiers(source_combo, target_combo, modifier_combinations):
     mappings = {}
     for mc in modifier_combinations:
-        print(f'COMB: {mc}')
-        mappings[_add_modifiers(combo, mc)] = Combo(set(mc), key)
+        mappings[_add_modifiers(source_combo, mc)] = Combo(set(mc), target_combo.key)
     return mappings
 
 
 def _transfer_modifiers(mappings):
-    modifier_keys = Modifier.get_all_keys()
-    modifiers = map(lambda k: Modifier.from_key(k), modifier_keys)
+    modifiers = Modifier.get_abstract_modifiers()
+    print(f'MODIFIERS: {modifiers}')
     modifier_combinations = _generate_combinations(modifiers)
     result = {}
-    print(f'MODIFIERS:\n{Modifier.get_all_keys()}')
-    for combo, key in mappings.items():
-        print(combo)
-        print(key)
-        result.update(_generate_mappings_with_modifiers(combo, key, modifier_combinations))
-    print(f'RESULT MAPPINGS:\n{result}')
+    mappings_str = '\n'.join(list(map(lambda m: str(m), mappings)))
+    print(f'MAPPINGS:\n{mappings_str}')
+    for source_combo, target_combo in mappings.items():
+        if isinstance(target_combo, Key):
+            target_combo = Combo(None, target_combo)
+        # TODO: support arrays
+        if isinstance(target_combo, list):
+            raise Exception('no support for arrays')
+        result.update(_generate_mappings_with_modifiers(source_combo, target_combo, modifier_combinations))
+    result_str = '\n'.join(list(map(lambda m: str(m), result)))
+    print(f'RESULT MAPPINGS:\n{result_str}')
     return result
 
 
@@ -248,7 +254,6 @@ def define_keymap(condition, mappings, name="Anonymous keymap"):
                 if isinstance(k, Combo):
                     expanded_modifiers = []
                     for modifier in k.modifiers:
-                        print(modifier)
                         if not modifier.is_specified():
                             expanded_modifiers.append([modifier.to_left(), modifier.to_right()])
                         else:
