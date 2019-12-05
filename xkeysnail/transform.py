@@ -213,6 +213,7 @@ escape_next_key = {}
 pass_through_key = {}
 
 
+# TODO: add currently used function keys to combinations
 def _generate_combinations(items):
     # to reduce number of mapping combinations assume that no one will use more than 2 modifier keys simultaneously
     max_modifiers = 2
