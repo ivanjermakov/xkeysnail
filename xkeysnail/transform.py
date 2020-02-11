@@ -233,11 +233,11 @@ def _generate_mappings_with_modifiers(source_combo, target_combo, modifier_combi
 
 def _transfer_modifiers(mappings):
     modifiers = Modifier.get_abstract_modifiers()
-    print(f'MODIFIERS: {modifiers}')
+    # print(f'MODIFIERS: {modifiers}')
     modifier_combinations = _generate_combinations(modifiers)
     result = {}
     mappings_str = '\n'.join(list(map(lambda m: str(m), mappings)))
-    print(f'MAPPINGS:\n{mappings_str}')
+    # print(f'MAPPINGS:\n{mappings_str}')
     for source_combo, target_combo in mappings.items():
         if isinstance(target_combo, Key):
             target_combo = Combo(None, target_combo)
@@ -246,7 +246,7 @@ def _transfer_modifiers(mappings):
             raise Exception('no support for arrays')
         result.update(_generate_mappings_with_modifiers(source_combo, target_combo, modifier_combinations))
     result_str = '\n'.join(list(map(lambda m: str(m), result)))
-    print(f'RESULT MAPPINGS:\n{result_str}')
+    # print(f'RESULT MAPPINGS:\n{result_str}')
     return result
 
 

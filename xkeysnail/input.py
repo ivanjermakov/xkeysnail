@@ -98,7 +98,7 @@ def in_device_list(fn, devices):
 
 
 def loop(device_matches, device_watch, quiet):
-    devices = select_device(device_matches, True)
+    devices = select_device(device_matches, False)
     try:
         for device in devices:
             device.grab()
@@ -113,8 +113,7 @@ def loop(device_matches, device_watch, quiet):
         print("Watching keyboard devices plug in")
     device_filter = DeviceFilter(device_matches)
 
-    if quiet:
-        print("No key event will be output since quiet option was specified.")
+    print('Listening devices...')
 
     try:
         while True:
